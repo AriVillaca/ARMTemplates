@@ -1,5 +1,5 @@
 
-The WebAppWithLogsAndAppInsights project contains an ARM template which specifies the folloowing resources:
+The **WebAppWithLogsAndAppInsights** project contains an ARM template which specifies the folloowing resources:
 
 1.  a Web App hosting plan
 2.  a Web App
