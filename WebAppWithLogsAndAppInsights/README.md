@@ -14,4 +14,4 @@ The WebAppWithLogsAndAppInsights project contains an ARM template which specifie
 11. Application Insights forbidden requests alert rules for the Web App 
 12. Application Insights cpu high alert rules for the Web App hosting plan
 13. Application Insights long http queue alert rules for the Web App hosting plan
-14. Applicaiton Insights to monitor the Web App
+14. Application Insights to monitor the Web App
