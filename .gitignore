@@ -3,3 +3,5 @@
 ################################################################################
 
 *.suo
+/WebAppWithLogsAndAppInsights/bin/Debug/staging/WebAppWithLogsAndAppInsights
+/.vs/config
