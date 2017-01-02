@@ -1,3 +1,3 @@
 # ARMTemplates
 
-This solution has a collection of ARM templates.
+The ARMTemplates solution has a collection of ARM templates.
