@@ -1,5 +1,6 @@
 
 The WebAppWithLogsAndAppInsights project contains an ARM template which specifies the folloowing resources:
+
 1.  a Web App hosting plan
 2.  a Web App
 3.     the Web App configuration
@@ -14,4 +15,3 @@ The WebAppWithLogsAndAppInsights project contains an ARM template which specifie
 12. Application Insights cpu high alert rules for the Web App hosting plan
 13. Application Insights long http queue alert rules for the Web App hosting plan
 14. Applicaiton Insights to monitor the Web App
-
