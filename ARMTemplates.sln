@@ -10,6 +10,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{D79E6F0A-4
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "FunctionAppWithConsumptionPlanAndLogsAndAppInsights", "FunctionAppWithConsumptionPlanAndLogsAndAppInsights\FunctionAppWithConsumptionPlanAndLogsAndAppInsights.deployproj", "{4EB3342E-258D-4801-81B2-490672FA7A00}"
+EndProject
+Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "FunctionAppWithLogsAndAppInsights", "FunctionAppWithLogsAndAppInsights\FunctionAppWithLogsAndAppInsights.deployproj", "{BD022F03-0327-4C74-83C7-7C2424E18492}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +24,14 @@ Global
 		{5BD1CDA6-E284-4F6C-A8BA-FDCC7A7080FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5BD1CDA6-E284-4F6C-A8BA-FDCC7A7080FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5BD1CDA6-E284-4F6C-A8BA-FDCC7A7080FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4EB3342E-258D-4801-81B2-490672FA7A00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4EB3342E-258D-4801-81B2-490672FA7A00}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4EB3342E-258D-4801-81B2-490672FA7A00}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4EB3342E-258D-4801-81B2-490672FA7A00}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD022F03-0327-4C74-83C7-7C2424E18492}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD022F03-0327-4C74-83C7-7C2424E18492}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD022F03-0327-4C74-83C7-7C2424E18492}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD022F03-0327-4C74-83C7-7C2424E18492}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

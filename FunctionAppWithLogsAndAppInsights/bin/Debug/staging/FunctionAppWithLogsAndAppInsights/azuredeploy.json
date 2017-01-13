@@ -40,8 +40,8 @@
     "variables": {
 
         "hostingPlanName": "[concat('webapphostplanname', uniqueString(resourceGroup().id))]",
-        "webAppName": "[concat('webapp', uniqueString(resourceGroup().id))]",
-        "webAppAppInsightsName": "[concat(variables('webAppName'), 'appinsights')]",
+        "funcAppName": "[concat('webapp', uniqueString(resourceGroup().id))]",
+        "funcAppAppInsightsName": "[concat(variables('funcAppName'), 'appinsights')]",
         "siteConfigurationProperties": {
             "netFrameworkVersion": "v4.6",
             "phpVersion": "5.6",
@@ -66,11 +66,13 @@
             "type": "Microsoft.Web/serverfarms",
             "location": "[resourceGroup().location]",
             "tags": {
+                "displayName": "Hosting Plan"
             },
             "sku": {
                 "name": "[parameters('skuName')]",
                 "capacity": "[parameters('skuCapacity')]"
             },
+            "kind": "functionapp",
             "properties": {
                 "name": "[variables('hostingPlanName')]"
             }
@@ -78,17 +80,18 @@
 
         {
             "apiVersion": "2015-08-01",
-            "name": "[variables('webAppName')]",
+            "name": "[variables('funcAppName')]",
             "type": "Microsoft.Web/sites",
-            "kind": "app",
+            "kind": "functionapp",
             "location": "[resourceGroup().location]",
             "tags": {
+                "displayName": "Function App"
             },
             "dependsOn": [
                 "[concat('Microsoft.Web/serverfarms/', variables('hostingPlanName'))]"
             ],
             "properties": {
-                "name": "[variables('webAppName')]",
+                "name": "[variables('funcAppName')]",
                 "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
                 "clientAffinityEnabled": false
             },
@@ -99,7 +102,7 @@
                     "name": "web",
                     "type": "config",
                     "dependsOn": [
-                        "[concat('Microsoft.Web/sites/', variables('webAppName'))]"
+                        "[concat('Microsoft.Web/sites/', variables('funcAppName'))]"
                     ],
                     "properties": "[variables('siteConfigurationProperties')]"
                 },
@@ -109,14 +112,14 @@
                     "type": "config",
                     "apiVersion": "2015-08-01",
                     "dependsOn": [
-                        "[concat('Microsoft.Web/sites/', variables('webAppName'))]",
-                        "[concat('Microsoft.Insights/components/', variables('webAppName'), 'appinsights')]"
+                        "[concat('Microsoft.Web/sites/', variables('funcAppName'))]",
+                        "[concat('Microsoft.Insights/components/', variables('funcAppName'), 'appinsights')]"
                     ],
                     "tags": {
                         "displayName": "AppSettings"
                     },
                     "properties": {
-                        "Keys:ApplicationInsights:InstrumentationKey": "[reference(concat('Microsoft.Insights/components/', variables('webAppAppInsightsName'))).InstrumentationKey]"
+                        "Keys:ApplicationInsights:InstrumentationKey": "[reference(concat('Microsoft.Insights/components/', variables('funcAppAppInsightsName'))).InstrumentationKey]"
                     }
                 },
 
@@ -125,7 +128,7 @@
                     "type": "config",
                     "apiVersion": "2014-11-01",
                     "dependsOn": [
-                        "[concat('Microsoft.Web/sites/', variables('webAppName'))]"
+                        "[concat('Microsoft.Web/sites/', variables('funcAppName'))]"
                     ],
                     "properties": {
                     }
@@ -136,7 +139,7 @@
                     "name": "logs",
                     "type": "config",
                     "dependsOn": [
-                        "[concat('Microsoft.Web/sites/', variables('webAppName'))]"
+                        "[concat('Microsoft.Web/sites/', variables('funcAppName'))]"
                     ],
                     "properties": {
                         "applicationLogs": {
@@ -164,8 +167,8 @@
                     "type": "siteextensions",
                     "apiVersion": "2015-08-01",
                     "dependsOn": [
-                        "[resourceId('Microsoft.Web/Sites/', variables('webAppName'))]",
-                        "[resourceId('Microsoft.Web/Sites/config', variables('webAppName'), 'web')]"
+                        "[resourceId('Microsoft.Web/Sites/', variables('funcAppName'))]",
+                        "[resourceId('Microsoft.Web/Sites/config', variables('funcAppName'), 'web')]"
                     ],
                     "properties": {
                     }
@@ -176,8 +179,8 @@
                     "type": "siteextensions",
                     "apiVersion": "2015-08-01",
                     "dependsOn": [
-                        "[resourceId('Microsoft.Web/Sites/', variables('webAppName'))]",
-                        "[resourceId('Microsoft.Web/Sites/config', variables('webAppName'), 'web')]"
+                        "[resourceId('Microsoft.Web/Sites/', variables('funcAppName'))]",
+                        "[resourceId('Microsoft.Web/Sites/config', variables('funcAppName'), 'web')]"
                     ],
                     "properties": {
                     }
@@ -193,6 +196,7 @@
             "type": "Microsoft.Insights/autoscalesettings",
             "location": "[resourceGroup().location]",
             "tags": {
+                "displayName": "AutoScaleSettings"
             },
             "dependsOn": [
                 "[concat('Microsoft.Web/serverfarms/', variables('hostingPlanName'))]"
@@ -254,72 +258,6 @@
 
         {
             "apiVersion": "2014-04-01",
-            "name": "[concat('ServerErrors', variables('webAppName'))]",
-            "type": "Microsoft.Insights/alertrules",
-            "location": "[resourceGroup().location]",
-            "dependsOn": [
-                "[concat('Microsoft.Web/sites/', variables('webAppName'))]"
-            ],
-            "tags": {
-            },
-            "properties": {
-                "name": "[concat('ServerErrors', variables('webAppName'))]",
-                "description": "[concat(variables('webAppName'), ' has some server errors, status code 5xx.')]",
-                "isEnabled": false,
-                "condition": {
-                    "odata.type": "Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition",
-                    "dataSource": {
-                        "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource",
-                        "resourceUri": "[concat(resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('webAppName'))]",
-                        "metricName": "Http5xx"
-                    },
-                    "operator": "GreaterThan",
-                    "threshold": 0.0,
-                    "windowSize": "PT5M"
-                },
-                "action": {
-                    "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleEmailAction",
-                    "sendToServiceOwners": true,
-                    "customEmails": []
-                }
-            }
-        },
-
-        {
-            "apiVersion": "2014-04-01",
-            "name": "[concat('ForbiddenRequests', variables('webAppName'))]",
-            "type": "Microsoft.Insights/alertrules",
-            "location": "[resourceGroup().location]",
-            "dependsOn": [
-                "[concat('Microsoft.Web/sites/', variables('webAppName'))]"
-            ],
-            "tags": {
-            },
-            "properties": {
-                "name": "[concat('ForbiddenRequests', variables('webAppName'))]",
-                "description": "[concat(variables('webAppName'), ' has some requests that are forbidden, status code 403.')]",
-                "isEnabled": false,
-                "condition": {
-                    "odata.type": "Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition",
-                    "dataSource": {
-                        "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource",
-                        "resourceUri": "[concat(resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('webAppName'))]",
-                        "metricName": "Http403"
-                    },
-                    "operator": "GreaterThan",
-                    "threshold": 0,
-                    "windowSize": "PT5M"
-                },
-                "action": {
-                    "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleEmailAction",
-                    "sendToServiceOwners": true,
-                    "customEmails": []
-                }
-            }
-        },
-
-        {
-            "apiVersion": "2014-04-01",
             "name": "[concat('CPUHigh', variables('hostingPlanName'))]",
             "type": "Microsoft.Insights/alertrules",
             "location": "[resourceGroup().location]",
@@ -327,6 +265,7 @@
                 "[concat('Microsoft.Web/serverfarms/', variables('hostingPlanName'))]"
             ],
             "tags": {
+                "displayName": "CPUHigh Alert Rule"
             },
             "properties": {
                 "name": "[concat('CPUHigh', variables('hostingPlanName'))]",
@@ -360,6 +299,7 @@
                 "[concat('Microsoft.Web/serverfarms/', variables('hostingPlanName'))]"
             ],
             "tags": {
+                "displayName": "LongHttpQueue Alert Rule"
             },
             "properties": {
                 "name": "[concat('LongHttpQueue', variables('hostingPlanName'))]",
@@ -386,17 +326,18 @@
 
         {
             "apiVersion": "2014-04-01",
-            "name": "[variables('webAppAppInsightsName')]",
+            "name": "[variables('funcAppAppInsightsName')]",
             "type": "Microsoft.Insights/components",
             "kind": "web",
             "location": "East US",
             "dependsOn": [
-                "[concat('Microsoft.Web/sites/', variables('webAppName'))]"
+                "[concat('Microsoft.Web/sites/', variables('funcAppName'))]"
             ],
             "tags": {
+                "displayName" :  "ApplicationInsights" 
             },
             "properties": {
-                "applicationId": "[variables('webAppName')]"
+                "applicationId": "[variables('funcAppName')]"
             }
         }
 
